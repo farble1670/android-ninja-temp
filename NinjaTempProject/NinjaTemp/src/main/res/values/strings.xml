@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="app_name">Ninja Temp</string>
+  <string name="action_settings">Settings</string>
+  <string name="hello_world">Hello world!</string>
+
+  <string name="NS">http://schemas.android.com/apk/res/org.jtb.ninjatemp</string>
+  <string name="refresh">Refresh</string>
+  <string name="pref_units">Units</string>
+  <string name="pref_units_default">FAHRENHEIT</string>
+
+</resources>

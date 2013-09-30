@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/NinjaTemp/NinjaTemp.iml" filepath="$PROJECT_DIR$/NinjaTemp/NinjaTemp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NinjaTempProject.iml" filepath="$PROJECT_DIR$/NinjaTempProject.iml" />
+    </modules>
+  </component>
+</project>
+
