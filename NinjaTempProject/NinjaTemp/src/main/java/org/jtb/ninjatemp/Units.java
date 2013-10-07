@@ -1,5 +1,9 @@
 package org.jtb.ninjatemp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 enum Units {
   FAHRENHEIT, CELSIUS;
 
@@ -19,4 +23,9 @@ enum Units {
     return toFahrenheit(celsius);
   }
 
+  static Units getUnits(Context context) {
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    Units units = Units.valueOf(prefs.getString("units", Units.FAHRENHEIT.name()));
+    return units;
+  }
 }

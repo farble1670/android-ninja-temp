@@ -23,4 +23,12 @@ public class HeartbeatResponse extends Response {
     }
     return deviceData.optString("DA");
   }
+
+  public long getTimestamp() {
+    JSONObject deviceData = data.optJSONObject("data");
+    if (deviceData == null) {
+      return -1;
+    }
+    return deviceData.optLong("timestamp", -1);
+  }
 }

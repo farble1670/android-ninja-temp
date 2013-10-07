@@ -46,6 +46,8 @@ public class MainActivity extends Activity {
         list.setAdapter(adapter);
       }
     }.execute();
+
+    startService(new Intent(this, NotificationService.class));
   }
 
   @Override

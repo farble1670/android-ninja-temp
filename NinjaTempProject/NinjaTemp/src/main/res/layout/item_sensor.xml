@@ -28,9 +28,11 @@
           android:layout_height="256dp"
           android:id="@+id/layout_data">
 
-    <FrameLayout
+    <LinearLayout
             android:id="@+id/layout_heartbeat"
             android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true">
@@ -40,12 +42,21 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:fontFamily="sans-serif"
+              android:textStyle="bold"
               android:layout_alignParentLeft="true"
               android:layout_alignParentTop="true"
               android:textSize="64dp"
               android:text="128.0&#xb0;f"/>
 
-    </FrameLayout>
+      <TextView
+              android:id="@+id/text_last"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:fontFamily="sans-serif"
+              android:textSize="12dp"
+              android:text="Last heartbeat: XX XX XX"/>
+
+    </LinearLayout>
 
     <FrameLayout
             android:id="@+id/layout_history"

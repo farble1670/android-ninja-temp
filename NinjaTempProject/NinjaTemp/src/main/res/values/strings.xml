@@ -9,5 +9,6 @@
   <string name="refresh">Refresh</string>
   <string name="pref_units">Units</string>
   <string name="pref_units_default">FAHRENHEIT</string>
+  <string name="pref_period_default">ONE_DAY</string>
 
 </resources>

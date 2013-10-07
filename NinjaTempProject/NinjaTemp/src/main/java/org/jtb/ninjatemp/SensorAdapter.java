@@ -1,18 +1,13 @@
 package org.jtb.ninjatemp;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +18,6 @@ import uk.ac.cam.cl.dtg.snowdon.AreaGraphView;
 class SensorAdapter extends BaseAdapter {
   private final Context context;
   private final List<Device> devices;
-  private final Handler handler = new Handler();
   private final Units units;
 
   private SensorElement[] elements;
@@ -34,8 +28,7 @@ class SensorAdapter extends BaseAdapter {
 
     this.elements = new SensorElement[devices.size()];
 
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    this.units = Units.valueOf(prefs.getString("units", "FAHRENHEIT"));
+    this.units = Units.getUnits(context);
   }
 
   @Override
@@ -88,6 +81,9 @@ class SensorAdapter extends BaseAdapter {
         TextView tempText = (TextView) view.findViewById(R.id.text_temp);
         float tempValue = units.getValue(element.heartbeat.getDa());
         tempText.setText(GraphMaker.getTempString(tempValue));
+
+        TextView lastText = (TextView) view.findViewById(R.id.text_last);
+        lastText.setText(String.format("Last heartbeat: %s", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(element.heartbeat.getTimestamp())));
       }
 
       ViewGroup historyLayout = (ViewGroup) view.findViewById(R.id.layout_history);
@@ -98,16 +94,11 @@ class SensorAdapter extends BaseAdapter {
 
         AreaGraphView graph = (AreaGraphView) view.findViewById(R.id.graph_temp);
         new GraphMaker(context, units).create(graph, element.data.getDataPoints());
-
-        new Notifier(context, units).notify(devices.get(i), element.heartbeat, element.data.getDataPoints());
       }
     }
 
     return view;
   }
-
-  private static final long ONE_HOUR = 60 * 60 * 1000;
-  private static final long ONE_DAY = 24 * ONE_HOUR;
 
   private void getData(final int i, Device device) {
 
@@ -125,11 +116,10 @@ class SensorAdapter extends BaseAdapter {
     }.execute();
 
     Map<String, String> query = new HashMap<String, String>();
-    query.put("interval", "10min");
-
     long now = System.currentTimeMillis();
-
-    query.put("from", Long.toString(now - ONE_DAY));
+    Period period = Period.getPeriod(context);
+    query.put("interval", period.interval);
+    query.put("from", Long.toString(now - period.timeMillis));
     query.put("to", Long.toString(now));
     query.put("fn", "mean");
 

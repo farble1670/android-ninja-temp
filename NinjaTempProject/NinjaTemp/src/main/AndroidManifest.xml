@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
     <activity
-            android:name="org.jtb.ninjatemp.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -26,9 +26,12 @@
       </intent-filter>
     </activity>
     <activity
-            android:name="org.jtb.ninjatemp.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/app_name" >
     </activity>
+    <service android:name=".NotificationService"/>
+    <receiver android:name=".CancelReceiver"/>
+    <receiver android:name=".StartReceiver"/>
     </application>
 
 </manifest>
