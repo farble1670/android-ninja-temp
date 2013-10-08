@@ -8,8 +8,8 @@
 
   <uk.ac.cam.cl.dtg.snowdon.AreaGraphView
           android:id="@+id/graph"
-          android:layout_width="825dp"
+          android:layout_width="400dp"
           android:layout_gravity="center"
           app:graph_line_colour="@android:color/holo_blue_dark"
-          android:layout_height="325dp"/>
+          android:layout_height="200dp"/>
 </FrameLayout>
