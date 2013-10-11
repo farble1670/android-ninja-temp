@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
+  private static final int REQUEST_SETTINGS = 1;
+
   private ListView list;
   private SensorAdapter adapter;
 
@@ -20,24 +22,19 @@ public class MainActivity extends Activity {
     setContentView(R.layout.activity_main);
 
     list = (ListView) findViewById(R.id.list);
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
 
     refresh();
-    startService(new Intent(this, NotificationService.class));
   }
 
   private void refresh() {
     adapter = new SensorAdapter(MainActivity.this);
     list.setAdapter(adapter);
+
+    startService(new Intent(this, NotificationService.class));
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
     return true;
   }
@@ -49,9 +46,18 @@ public class MainActivity extends Activity {
         refresh();
         return true;
       case R.id.action_settings:
-        startActivity(new Intent(this, SettingsActivity.class));
+        startActivityForResult(new Intent(this, SettingsActivity.class), REQUEST_SETTINGS);
         return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == REQUEST_SETTINGS) {
+      if (resultCode == RESULT_OK) {
+        refresh();
+      }
+    }
   }
 }
