@@ -46,7 +46,12 @@ public class NotificationService extends Service {
       boolean show = prefs.getBoolean("notification", true);
       if (show) {
         notifications.clear();
-        doGetDevices();
+        new Fetcher(this) {
+          @Override
+          protected void onComplete(Device device, HeartbeatResponse heartbeat, DataResponse data) {
+            doNotification(device, heartbeat, data);
+          }
+        }.fetch();
         schedule();
       }
     } else {
@@ -75,65 +80,14 @@ public class NotificationService extends Service {
     alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
   }
 
-  private void doGetDevices() {
-    new RequestTask("/v0/devices", DevicesResponse.class) {
-      @Override
-      protected void onPostExecute(Response response) {
-        if (response == null || response.getResult() != 1) {
-          return;
-        }
-        DevicesResponse dr = (DevicesResponse) response;
-        List<Device> tempDevices = new ArrayList<Device>();
-        for (Device device : dr.getDevices()) {
-          if (device.getDeviceType().equals("temperature")) {
-            doGetHeartbeat(device);
-          }
-        }
-      }
-    }.execute();
-  }
-
-  private void doGetHeartbeat(final Device device) {
-    new RequestTask(String.format("/v0/device/%s/heartbeat", device.getGuid()), HeartbeatResponse.class) {
-      @Override
-      protected void onPostExecute(Response response) {
-        if (response.getResult() != 1) {
-          return;
-        }
-        HeartbeatResponse hbr = (HeartbeatResponse) response;
-        doGetData(device, hbr);
-      }
-    }.execute();
-  }
-
-  private void doGetData(final Device device, final HeartbeatResponse heartbeatResponse) {
-    Map<String, String> query = new HashMap<String, String>();
-    Period period = Period.getPeriod(this);
-    query.put("interval", period.interval);
-
-    long now = System.currentTimeMillis();
-
-    query.put("from", Long.toString(now - period.timeMillis));
-    query.put("to", Long.toString(now));
-    query.put("fn", "mean");
-
-    new RequestTask(String.format("/v0/device/%s/data", device.getGuid()), DataResponse.class, query) {
-      @Override
-      protected void onPostExecute(Response response) {
-        if (response.getResult() != 1) {
-          return;
-        }
-        DataResponse dr = (DataResponse) response;
-        doNotification(device, heartbeatResponse, dr);
-      }
-    }.execute();
-  }
-
   private void doNotification(Device device, HeartbeatResponse heartbeatResponse, DataResponse dr) {
     Units units = Units.getUnits(this);
 
     GraphNotification notification = new GraphNotification(this, units);
     Notification n = notification.notify(device, heartbeatResponse, dr.getDataPoints());
+    if (n == null) {
+      return;
+    }
 
     if (notifications.isEmpty()) {
       startForeground(device.getGuid().hashCode(), n);

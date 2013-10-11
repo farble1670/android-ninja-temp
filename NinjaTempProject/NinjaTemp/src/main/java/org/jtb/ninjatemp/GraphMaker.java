@@ -1,12 +1,15 @@
 package org.jtb.ninjatemp;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
 import uk.ac.cam.cl.dtg.snowdon.GraphView;
 
 class GraphMaker {
+  private static final String TAG = GraphMaker.class.getSimpleName();
+
   private final Context context;
   private final Units units;
 
@@ -32,14 +35,33 @@ class GraphMaker {
 
       float[] xs = new float[points.size()];
       float[] ys = new float[points.size()];
+
       float ymin = 0.0f;
       float ymax = 0.0f;
 
-      for (int x = 0; x < points.size(); x++) {
-        xs[x] = (float) x;
+      Interval interval = Interval.obtain(Period.getPeriod(context));
 
-        float y = units.getValue(points.get(x).getValue());
-        ys[x] = y;
+      long xMin = interval.start;
+      long xMax = interval.end;
+
+      //Log.d(TAG, String.format("xMin=%d, xMax=%d", xMin, xMax));
+
+      DataPoint.sort(points);
+
+      for (int i = 0; i < points.size(); i++) {
+        //Log.d(TAG, String.format("processing time: %s (%d)", points.get(i).getTimeString(), points.get(i).getTimeMillis()));
+
+        long x = points.get(i).getTimeMillis();
+        xs[i] = x;
+
+        if (x < xMin) {
+          xMin = x;
+        } else if (x > xMax) {
+          xMax = x;
+        }
+
+        float y = units.getValue(points.get(i).getValue());
+        ys[i] = y;
 
         if (ymin == 0.0f) {
           ymin = y;
@@ -83,12 +105,8 @@ class GraphMaker {
       float[][] data = {xs, ys};
 
 
-      graph.setData(new float[][][]{data}, 0.0f, xs.length - 1, ymin - 1.0f, ymax + 1.0f);
+      graph.setData(new float[][][]{data}, xMin, xMax, ymin - 1.0f, ymax + 1.0f);
     }
-  }
-
-  static String getTempString(String s) {
-    return getTempString(Float.valueOf(s));
   }
 
   static String getTempString(float val) {

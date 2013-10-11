@@ -25,29 +25,14 @@ public class MainActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
+
     refresh();
+    startService(new Intent(this, NotificationService.class));
   }
 
   private void refresh() {
-    new RequestTask("/v0/devices", DevicesResponse.class) {
-      @Override
-      protected void onPostExecute(Response response) {
-        if (response == null || response.getResult() != 1) {
-          return;
-        }
-        DevicesResponse dr = (DevicesResponse) response;
-        List<Device> tempDevices = new ArrayList<Device>();
-        for (Device device: dr.getDevices()) {
-          if (device.getDeviceType().equals("temperature")) {
-            tempDevices.add(device);
-          }
-        }
-        adapter = new SensorAdapter(MainActivity.this, tempDevices);
-        list.setAdapter(adapter);
-      }
-    }.execute();
-
-    startService(new Intent(this, NotificationService.class));
+    adapter = new SensorAdapter(MainActivity.this);
+    list.setAdapter(adapter);
   }
 
   @Override
