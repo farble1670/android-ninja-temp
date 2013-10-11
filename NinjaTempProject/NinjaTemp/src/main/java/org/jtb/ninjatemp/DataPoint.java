@@ -51,7 +51,7 @@ public class DataPoint extends Response {
     } catch (ParseException e) {
       e.printStackTrace();
     }
-    return 0;
+    return -1;
   }
 
   String getValue() {

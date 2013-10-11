@@ -52,6 +52,10 @@ class GraphMaker {
         //Log.d(TAG, String.format("processing time: %s (%d)", points.get(i).getTimeString(), points.get(i).getTimeMillis()));
 
         long x = points.get(i).getTimeMillis();
+        if (x == -1) {
+          continue;
+        }
+        
         xs[i] = x;
 
         if (x < xMin) {
