@@ -4,7 +4,7 @@
         android:orderInCategory="100"
         android:showAsAction="never" />
   <item android:id="@+id/action_refresh"
-        android:icon="@android:drawable/ic_menu_rotate"
+        android:icon="@drawable/ic_action_refresh"
         android:title="@string/refresh"
         android:orderInCategory="100"
         android:showAsAction="always" />

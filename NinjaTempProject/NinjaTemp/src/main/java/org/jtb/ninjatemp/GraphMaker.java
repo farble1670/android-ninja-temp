@@ -55,7 +55,7 @@ class GraphMaker {
         if (x == -1) {
           continue;
         }
-        
+
         xs[i] = x;
 
         if (x < xMin) {
